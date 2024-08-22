@@ -1,20 +1,15 @@
 import AddButton from "../atoms/AddButton.tsx";
-import { useQuery } from "@tanstack/react-query";
 import ContactCard from "../molecules/ContactCard.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { ContactCardEntity } from "../../types.ts";
 import styles from "./organisms.module.css";
-
-type ContactCard = {
-    id: string;
-    firstname: string;
-    lastname: string;
-    email: string;
-};
 
 type ContactListProps = {
     handleOpenForm: () => void;
+    setSelectedContact: (card: ContactCardEntity) => void;
 };
 
-const ContactList = ({ handleOpenForm }: ContactListProps) => {
+const ContactList = ({ handleOpenForm, setSelectedContact }: ContactListProps) => {
     const { data, isLoading, error } = useQuery({
         queryKey: ["contacts"],
         queryFn: () => fetch("http://localhost:3001/contacts").then((res) => res.json()),
@@ -28,13 +23,16 @@ const ContactList = ({ handleOpenForm }: ContactListProps) => {
         <div>
             <AddButton clickHandler={handleOpenForm} text={"NEUER EINTRAG"} />
             <div className={styles.contacts_grid}>
-                {data?.map((card: ContactCard) => {
+                {data?.map((card: ContactCardEntity) => {
                     return (
                         <ContactCard
                             key={card.id}
+                            id={card.id}
                             firstname={card.firstname}
                             lastname={card.lastname}
                             email={card.email}
+                            setSelectedContact={setSelectedContact}
+                            clickHandler={handleOpenForm}
                         />
                     );
                 })}
