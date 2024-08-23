@@ -6,25 +6,32 @@ type FormButtonsBlockProps = {
     closeHandler: () => void;
     submitHandler: () => void;
     selectedContact: null | ContactCardEntity;
+    deleteHandler: () => void;
 };
 
 const FormButtonsBlock = ({
     closeHandler,
     submitHandler,
     selectedContact,
+    deleteHandler,
 }: FormButtonsBlockProps) => {
     const formSubmitHandler = () => {
         submitHandler();
         closeHandler();
     };
 
+    const formDeleteHandler = () => {
+        deleteHandler();
+        closeHandler();
+    };
+
     return (
         <div className={styles.form_buttons}>
             <div>
-                {selectedContact?.email && (
+                {selectedContact?.id && (
                     <AddButton
                         text="LOSCHEN"
-                        clickHandler={closeHandler}
+                        clickHandler={formDeleteHandler}
                         variant="text"
                         color="error"
                     />
