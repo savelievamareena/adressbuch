@@ -1,7 +1,7 @@
 import FormPortal from "../molecules/FormPortal.tsx";
 import { TextField } from "@mui/material";
 import FormButtonsBlock from "../molecules/FormButtonsBlock.tsx";
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type ContactCardEntity } from "../../types.ts";
 import styles from "./organisms.module.css";
@@ -21,6 +21,7 @@ const ContactForm = ({
 }: ContactFormProps) => {
     if (!isOpen) return null;
 
+    const [validationError, setValidationError] = useState(false);
     const queryClient = useQueryClient();
 
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -78,12 +79,20 @@ const ContactForm = ({
         },
     });
 
-    const { mutate: deleteMutation } = useMutation({
+    const { mutate: deleteMutation, isPending } = useMutation({
         mutationFn: deleteContact,
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: ["contacts"] });
         },
     });
+
+    const submitHandler = () => {
+        if (!selectedContact.firstname || !selectedContact.lastname || !selectedContact.email) {
+            setValidationError(true);
+        } else {
+            mutate(selectedContact);
+        }
+    };
 
     return (
         <FormPortal>
@@ -128,15 +137,14 @@ const ContactForm = ({
                                 fullWidth
                             />
                         </div>
-                        {isError && (
-                            <div className={styles.error}>An error occurred: {error.message}</div>
+                        {(isError || validationError) && (
+                            <div className={styles.error}>{error?.message ?? "Fill the form"}</div>
                         )}
                         <FormButtonsBlock
+                            isPending={isPending}
                             selectedContact={selectedContact}
                             closeHandler={onClose}
-                            submitHandler={() => {
-                                mutate(selectedContact);
-                            }}
+                            submitHandler={submitHandler}
                             deleteHandler={() => {
                                 deleteMutation(selectedContact.id);
                             }}

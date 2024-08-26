@@ -4,7 +4,7 @@
     color: #707070;
     height: 60px;
     width: 240px;
-    padding: 6px 14px;
+    padding: 6px 0;
     border-radius: 3px;
     display: flex;
     flex-direction: column;
@@ -12,8 +12,13 @@
     cursor: pointer;
 }
 
+.email {
+    padding-left: 14px;
+}
+
 .name {
     font-weight: 900;
+    padding-left: 14px;
 }
 
 .form_buttons {
@@ -24,6 +29,24 @@
 .form_right_buttons {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+    .form_right_buttons {
+        flex-direction: row;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        height: 40px;
+        border-radius: 0;
+        width: 100vw;
+        flex-direction: column;
+    }
 }
 

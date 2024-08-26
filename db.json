@@ -23,18 +23,6 @@
       "firstname": "Test",
       "lastname": "User",
       "email": "persempre1@yandex.ru"
-    },
-    {
-      "id": "c6bc",
-      "firstname": "Maryna",
-      "lastname": "Savelyevar",
-      "email": "test@yandex.ru"
-    },
-    {
-      "id": "168d",
-      "firstname": "Dasha",
-      "lastname": "Gap",
-      "email": "pochta@google.com"
     }
   ]
 }

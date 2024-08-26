@@ -12,7 +12,6 @@ const AddressBookTemplate = () => {
         lastname: "",
         email: "",
     });
-    console.log(selectedContact.id);
 
     const openForm = () => {
         setIsFormOpen(true);

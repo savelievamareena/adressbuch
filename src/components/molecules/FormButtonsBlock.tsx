@@ -7,6 +7,7 @@ type FormButtonsBlockProps = {
     submitHandler: () => void;
     selectedContact: null | ContactCardEntity;
     deleteHandler: () => void;
+    isPending: boolean;
 };
 
 const FormButtonsBlock = ({
@@ -14,6 +15,7 @@ const FormButtonsBlock = ({
     submitHandler,
     selectedContact,
     deleteHandler,
+    isPending,
 }: FormButtonsBlockProps) => {
     const formSubmitHandler = () => {
         submitHandler();
@@ -44,7 +46,11 @@ const FormButtonsBlock = ({
                     variant="outlined"
                     color={"secondary"}
                 />
-                <AddButton text="Speichern" clickHandler={formSubmitHandler} />
+                <AddButton
+                    text="Speichern"
+                    clickHandler={formSubmitHandler}
+                    isPending={isPending}
+                />
             </div>
         </div>
     );

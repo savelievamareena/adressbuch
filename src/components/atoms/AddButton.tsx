@@ -5,6 +5,7 @@ type AddButtonType = {
     text: string;
     color?: "inherit" | "primary" | "secondary" | "success" | "error" | "info" | "warning";
     variant?: "text" | "contained" | "outlined";
+    isPending?: boolean;
 };
 
 const AddButton = ({
@@ -12,9 +13,10 @@ const AddButton = ({
     text,
     color = "primary",
     variant = "contained",
+    isPending = false,
 }: AddButtonType) => {
     return (
-        <Button variant={variant} onClick={clickHandler} color={color}>
+        <Button variant={variant} onClick={clickHandler} color={color} disabled={isPending}>
             {text}
         </Button>
     );

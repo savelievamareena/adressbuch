@@ -15,28 +15,35 @@ const ContactList = ({ handleOpenForm, setSelectedContact }: ContactListProps) =
         queryFn: () => fetch("http://localhost:3001/contacts").then((res) => res.json()),
     });
 
-    if (isLoading) return "Loading...";
-
     if (error) return "Error...";
 
     return (
-        <div>
-            <AddButton clickHandler={handleOpenForm} text={"NEUER EINTRAG"} />
-            <div className={styles.contacts_grid}>
-                {data?.map((card: ContactCardEntity) => {
-                    return (
-                        <ContactCard
-                            key={card.id}
-                            id={card.id}
-                            firstname={card.firstname}
-                            lastname={card.lastname}
-                            email={card.email}
-                            setSelectedContact={setSelectedContact}
-                            clickHandler={handleOpenForm}
-                        />
-                    );
-                })}
+        <div className={styles.address_book}>
+            <div className={styles.add_button}>
+                <AddButton clickHandler={handleOpenForm} text={"NEUER EINTRAG"} />
             </div>
+            {isLoading ? (
+                <div>"...Loading"</div>
+            ) : (
+                <div className={styles.contacts_grid}>
+                    {data?.map((card: ContactCardEntity) => {
+                        return (
+                            <ContactCard
+                                key={card.id}
+                                id={card.id}
+                                firstname={card.firstname}
+                                lastname={card.lastname}
+                                email={card.email}
+                                setSelectedContact={setSelectedContact}
+                                clickHandler={handleOpenForm}
+                            />
+                        );
+                    })}
+                </div>
+            )}
+            <button className={styles.floating_button} onClick={handleOpenForm}>
+                +
+            </button>
         </div>
     );
 };
