@@ -1,6 +1,6 @@
-import AddButton from "../atoms/AddButton.tsx";
+import AddButton from "../atoms/AddButton";
 import styles from "./molecules.module.css";
-import { type ContactCardEntity } from "../../types.ts";
+import { type ContactCardEntity } from "../../types";
 
 type FormButtonsBlockProps = {
     closeHandler: () => void;
@@ -19,7 +19,6 @@ const FormButtonsBlock = ({
 }: FormButtonsBlockProps) => {
     const formSubmitHandler = () => {
         submitHandler();
-        closeHandler();
     };
 
     const formDeleteHandler = () => {

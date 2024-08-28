@@ -1,30 +1,23 @@
-import FormPortal from "../molecules/FormPortal.tsx";
+import FormPortal from "../molecules/FormPortal";
 import { TextField } from "@mui/material";
-import FormButtonsBlock from "../molecules/FormButtonsBlock.tsx";
+import FormButtonsBlock from "../molecules/FormButtonsBlock";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type ContactCardEntity } from "../../types.ts";
+import { type ContactCardEntity } from "../../types";
 import styles from "./organisms.module.css";
 
 type ContactFormProps = {
-    isOpen: boolean;
     onClose: () => void;
     selectedContact: ContactCardEntity;
     setSelectedContact: Dispatch<SetStateAction<ContactCardEntity>>;
 };
 
-const ContactForm = ({
-    isOpen,
-    onClose,
-    selectedContact,
-    setSelectedContact,
-}: ContactFormProps) => {
-    if (!isOpen) return null;
-
+const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFormProps) => {
     const [validationError, setValidationError] = useState(false);
     const queryClient = useQueryClient();
 
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setValidationError(false);
         const { name, value } = e.target;
         setSelectedContact(
             (prevData: ContactCardEntity): ContactCardEntity => ({
@@ -91,6 +84,7 @@ const ContactForm = ({
             setValidationError(true);
         } else {
             mutate(selectedContact);
+            onClose();
         }
     };
 
@@ -138,7 +132,9 @@ const ContactForm = ({
                             />
                         </div>
                         {(isError || validationError) && (
-                            <div className={styles.error}>{error?.message ?? "Fill the form"}</div>
+                            <div className={styles.error}>
+                                {error?.message ?? "Please, fill all the fields"}
+                            </div>
                         )}
                         <FormButtonsBlock
                             isPending={isPending}

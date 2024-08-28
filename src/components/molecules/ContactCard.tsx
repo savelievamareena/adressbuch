@@ -1,5 +1,5 @@
 import styles from "./molecules.module.css";
-import { type ContactCardEntity } from "../../types.ts";
+import { ContactCardEntity } from "../../types";
 
 type ContactCardProps = {
     id: string;

@@ -1,8 +1,8 @@
-import ContactList from "../organisms/ContactList.tsx";
-import styles from "./AddressBookTemplate.module.css";
+import ContactList from "../organisms/ContactList";
+import styles from "./templates.module.css";
 import { useState } from "react";
-import ContactForm from "../organisms/ContactForm.tsx";
-import { type ContactCardEntity } from "../../types.ts";
+import ContactForm from "../organisms/ContactForm";
+import { type ContactCardEntity } from "../../types";
 
 const AddressBookTemplate = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -28,12 +28,13 @@ const AddressBookTemplate = () => {
     };
     return (
         <div className={styles.template_layout}>
-            <ContactForm
-                isOpen={isFormOpen}
-                onClose={closeForm}
-                selectedContact={selectedContact}
-                setSelectedContact={setSelectedContact}
-            />
+            {isFormOpen && (
+                <ContactForm
+                    onClose={closeForm}
+                    selectedContact={selectedContact}
+                    setSelectedContact={setSelectedContact}
+                />
+            )}
             <ContactList handleOpenForm={openForm} setSelectedContact={setSelectedContact} />
         </div>
     );

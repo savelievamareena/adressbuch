@@ -1,7 +1,7 @@
-import AddButton from "../atoms/AddButton.tsx";
-import ContactCard from "../molecules/ContactCard.tsx";
+import AddButton from "../atoms/AddButton";
+import ContactCard from "../molecules/ContactCard";
 import { useQuery } from "@tanstack/react-query";
-import { ContactCardEntity } from "../../types.ts";
+import { ContactCardEntity } from "../../types";
 import styles from "./organisms.module.css";
 
 type ContactListProps = {
@@ -23,7 +23,7 @@ const ContactList = ({ handleOpenForm, setSelectedContact }: ContactListProps) =
                 <AddButton clickHandler={handleOpenForm} text={"NEUER EINTRAG"} />
             </div>
             {isLoading ? (
-                <div>"...Loading"</div>
+                <div>...Loading</div>
             ) : (
                 <div className={styles.contacts_grid}>
                     {data?.map((card: ContactCardEntity) => {
