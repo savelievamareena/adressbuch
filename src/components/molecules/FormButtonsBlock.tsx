@@ -35,6 +35,7 @@ const FormButtonsBlock = ({
                         clickHandler={formDeleteHandler}
                         variant="text"
                         color="error"
+                        isPending={isPending}
                     />
                 )}
             </div>

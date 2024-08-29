@@ -72,7 +72,11 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
         },
     });
 
-    const { mutate: deleteMutation, isPending } = useMutation({
+    const {
+        mutate: deleteMutation,
+        isPending,
+        isError: deleteIsError,
+    } = useMutation({
         mutationFn: deleteContact,
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: ["contacts"] });
@@ -96,6 +100,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                     <form className={styles.form_fields}>
                         <div className={styles.name_row}>
                             <TextField
+                                aria-label="firstname"
                                 id="outlined-basic"
                                 label="Vorname"
                                 variant="outlined"
@@ -107,6 +112,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                                 fullWidth
                             />
                             <TextField
+                                aria-label="lastname"
                                 id="outlined-basic"
                                 label="Nachname"
                                 variant="outlined"
@@ -120,6 +126,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                         </div>
                         <div>
                             <TextField
+                                aria-label="email"
                                 id="outlined-basic"
                                 label="E-Mail"
                                 variant="outlined"
@@ -131,8 +138,9 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                                 fullWidth
                             />
                         </div>
-                        {(isError || validationError) && (
+                        {(isError || validationError || deleteIsError) && (
                             <div className={styles.error}>
+                                {deleteIsError && "Deletion Error"}
                                 {error?.message ?? "Please, fill all the fields"}
                             </div>
                         )}

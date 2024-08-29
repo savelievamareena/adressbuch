@@ -34,7 +34,6 @@ describe("ContactForm Component", () => {
             invalidateQueries: jest.fn(),
         });
 
-        // Mock useMutation to return the mocked mutate functions
         (useMutation as jest.Mock).mockImplementation(({ mutationFn }) => {
             if (mutationFn.name === "addContact") {
                 return { mutate: mockMutate, isError: false, error: null };
@@ -54,17 +53,14 @@ describe("ContactForm Component", () => {
             />
         );
 
-        // Find the "Speichern" button (assuming it's a button element)
         fireEvent.click(screen.getByRole("button", { name: "Speichern" }));
 
-        // Verify the error message
         expect(screen.getByText("Please, fill all the fields")).toBeInTheDocument();
     });
 
     test("calls submitHandler and mutate when form is submitted with valid data", async () => {
         render(<ContactForm {...defaultProps} />);
 
-        // Find the "Speichern" button
         fireEvent.click(screen.getByRole("button", { name: "Speichern" }));
 
         await waitFor(() => expect(mockMutate).toHaveBeenCalledWith(defaultProps.selectedContact));
@@ -74,7 +70,6 @@ describe("ContactForm Component", () => {
     test("calls deleteHandler and deleteMutation when delete button is clicked", async () => {
         render(<ContactForm {...defaultProps} />);
 
-        // Find the "LOSCHEN" button
         fireEvent.click(screen.getByRole("button", { name: "LOSCHEN" }));
 
         await waitFor(() =>
@@ -85,7 +80,6 @@ describe("ContactForm Component", () => {
     test("shows error message on mutation failure", async () => {
         const errorMessage = "Failed to submit the form";
 
-        // Mock useMutation to return an error
         (useMutation as jest.Mock).mockImplementation(({ mutationFn }) => {
             if (mutationFn.name === "addContact") {
                 return { mutate: mockMutate, isError: true, error: { message: errorMessage } };
@@ -103,7 +97,7 @@ describe("ContactForm Component", () => {
     // test("calls setSelectedContact on input change", () => {
     //     render(<ContactForm {...defaultProps} />);
     //
-    //     fireEvent.change(screen.getByRole("textbox", { name: "firstname" }), {
+    //     fireEvent.change(screen.getByTestId("firstname-input"), {
     //         target: { value: "Jane" },
     //     });
     //
@@ -112,24 +106,21 @@ describe("ContactForm Component", () => {
     //         firstname: "Jane",
     //     });
     //
-    //     fireEvent.change(screen.getByRole("textbox", { name: "lastname" }), {
+    //     fireEvent.change(screen.getByLabelText("lastname"), {
     //         target: { value: "Doe", name: "lastname" },
     //     });
     //
     //     expect(mockSetSelectedContact).toHaveBeenCalledWith({
     //         ...defaultProps.selectedContact,
-    //         firstname: "Jane",
     //         lastname: "Doe",
     //     });
     //
-    //     fireEvent.change(screen.getByRole("textbox", { name: "email" }), {
+    //     fireEvent.change(screen.getByLabelText("email"), {
     //         target: { value: "jane.doe@example.com", name: "email" },
     //     });
     //
     //     expect(mockSetSelectedContact).toHaveBeenCalledWith({
     //         ...defaultProps.selectedContact,
-    //         firstname: "Jane",
-    //         lastname: "Doe",
     //         email: "jane.doe@example.com",
     //     });
     // });
@@ -137,31 +128,50 @@ describe("ContactForm Component", () => {
     test("does not call mutate if form is closed without submitting", () => {
         render(<ContactForm {...defaultProps} />);
 
-        fireEvent.click(screen.getByRole("button", { name: /Speichern/i }));
+        fireEvent.click(screen.getByRole("button", { name: "Abbrechen" }));
 
-        expect(defaultProps.setSelectedContact).not.toHaveBeenCalled();
-        expect(defaultProps.onClose).toHaveBeenCalled();
+        expect(mockMutate).not.toHaveBeenCalled();
+        expect(mockOnClose).toHaveBeenCalled();
     });
 
-    // test("handles delete mutation failure correctly", async () => {
-    //     const deleteErrorMessage = "Failed to delete the contact";
-    //
-    //     (useMutation as jest.Mock).mockImplementation(({ mutationFn }) => {
-    //         if (mutationFn.name === "deleteContact") {
-    //             return {
-    //                 mutate: mockDeleteMutate,
-    //                 isError: true,
-    //                 error: { message: deleteErrorMessage },
-    //             };
-    //         }
-    //         return { mutate: jest.fn(), isError: false, error: null };
-    //     });
-    //
-    //     render(<ContactForm {...defaultProps} />);
-    //
-    //     fireEvent.click(screen.getByRole("button", { name: "LOSCHEN" }));
-    //     await waitFor(() =>
-    //         expect(screen.queryByText(new RegExp(deleteErrorMessage))).toBeInTheDocument()
-    //     );
-    // });
+    test("handles delete mutation failure correctly", async () => {
+        const deleteErrorMessage = "Deletion Error";
+
+        (useMutation as jest.Mock).mockImplementation(({ mutationFn }) => {
+            if (mutationFn.name === "deleteContact") {
+                return {
+                    mutate: mockDeleteMutate,
+                    isError: true,
+                    deleteIsError: true,
+                    error: { message: deleteErrorMessage },
+                };
+            }
+            return { mutate: jest.fn(), isError: false, deleteIsError: false, error: null };
+        });
+
+        render(<ContactForm {...defaultProps} />);
+
+        fireEvent.click(screen.getByRole("button", { name: "LOSCHEN" }));
+
+        await waitFor(() => {
+            expect(
+                screen.getByText((content) => content.includes(deleteErrorMessage))
+            ).toBeInTheDocument();
+        });
+    });
+
+    test("renders correctly with isPending true", () => {
+        (useMutation as jest.Mock).mockImplementation(({ mutationFn }) => {
+            if (mutationFn.name === "deleteContact") {
+                return {
+                    mutate: mockDeleteMutate,
+                    isPending: true,
+                };
+            }
+            return { mutate: jest.fn(), isError: false, error: null };
+        });
+
+        render(<ContactForm {...defaultProps} />);
+        expect(screen.getByRole("button", { name: "LOSCHEN" })).toBeDisabled();
+    });
 });
