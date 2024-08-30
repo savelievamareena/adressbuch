@@ -1,13 +1,16 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ContactForm from "../ContactForm";
-import "@testing-library/jest-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import fetchMock from "jest-fetch-mock";
+import "@testing-library/jest-dom";
 
 jest.mock("@tanstack/react-query", () => ({
     useMutation: jest.fn(),
     useQueryClient: jest.fn(),
 }));
+
+fetchMock.enableMocks();
 
 describe("ContactForm Component", () => {
     const mockOnClose = jest.fn();
@@ -29,6 +32,7 @@ describe("ContactForm Component", () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        fetchMock.resetMocks();
 
         (useQueryClient as jest.Mock).mockReturnValue({
             invalidateQueries: jest.fn(),
@@ -94,36 +98,52 @@ describe("ContactForm Component", () => {
         await waitFor(() => expect(screen.getByText(errorMessage)).toBeInTheDocument());
     });
 
-    // test("calls setSelectedContact on input change", () => {
-    //     render(<ContactForm {...defaultProps} />);
-    //
-    //     fireEvent.change(screen.getByTestId("firstname-input"), {
-    //         target: { value: "Jane" },
-    //     });
-    //
-    //     expect(mockSetSelectedContact).toHaveBeenCalledWith({
-    //         ...defaultProps.selectedContact,
-    //         firstname: "Jane",
-    //     });
-    //
-    //     fireEvent.change(screen.getByLabelText("lastname"), {
-    //         target: { value: "Doe", name: "lastname" },
-    //     });
-    //
-    //     expect(mockSetSelectedContact).toHaveBeenCalledWith({
-    //         ...defaultProps.selectedContact,
-    //         lastname: "Doe",
-    //     });
-    //
-    //     fireEvent.change(screen.getByLabelText("email"), {
-    //         target: { value: "jane.doe@example.com", name: "email" },
-    //     });
-    //
-    //     expect(mockSetSelectedContact).toHaveBeenCalledWith({
-    //         ...defaultProps.selectedContact,
-    //         email: "jane.doe@example.com",
-    //     });
-    // });
+    test("inputs to be in form", async () => {
+        render(<ContactForm {...defaultProps} />);
+
+        const field1 = screen.getByTestId("firstname").querySelector("input");
+        expect(field1).toBeInTheDocument();
+
+        const field2 = screen.getByTestId("lastname").querySelector("input");
+        expect(field2).toBeInTheDocument();
+
+        const field3 = screen.getByTestId("email").querySelector("input");
+        expect(field3).toBeInTheDocument();
+    });
+
+    test("calls setSelectedContact on input change", () => {
+        render(<ContactForm {...defaultProps} />);
+
+        const field1 = screen.getByTestId("firstname").querySelector("input");
+        if (field1) {
+            fireEvent.change(field1, { target: { value: "Jane" } });
+
+            expect(mockSetSelectedContact).toHaveBeenCalledWith({
+                ...defaultProps.selectedContact,
+                firstname: "Jane",
+            });
+        }
+
+        const field2 = screen.getByTestId("lastname").querySelector("input");
+        if (field2) {
+            fireEvent.change(field2, { target: { value: "Test" } });
+
+            expect(mockSetSelectedContact).toHaveBeenCalledWith({
+                ...defaultProps.selectedContact,
+                lastname: "Test",
+            });
+        }
+
+        const field3 = screen.getByTestId("email").querySelector("input");
+        if (field3) {
+            fireEvent.change(field3, { target: { value: "test_email@gmail.com" } });
+
+            expect(mockSetSelectedContact).toHaveBeenCalledWith({
+                ...defaultProps.selectedContact,
+                email: "test_email@gmail.com",
+            });
+        }
+    });
 
     test("does not call mutate if form is closed without submitting", () => {
         render(<ContactForm {...defaultProps} />);

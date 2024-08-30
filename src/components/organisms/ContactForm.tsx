@@ -100,7 +100,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                     <form className={styles.form_fields}>
                         <div className={styles.name_row}>
                             <TextField
-                                aria-label="firstname"
+                                data-testid="firstname"
                                 id="outlined-basic"
                                 label="Vorname"
                                 variant="outlined"
@@ -112,7 +112,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                                 fullWidth
                             />
                             <TextField
-                                aria-label="lastname"
+                                data-testid="lastname"
                                 id="outlined-basic"
                                 label="Nachname"
                                 variant="outlined"
@@ -126,7 +126,7 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                         </div>
                         <div>
                             <TextField
-                                aria-label="email"
+                                data-testid="email"
                                 id="outlined-basic"
                                 label="E-Mail"
                                 variant="outlined"
