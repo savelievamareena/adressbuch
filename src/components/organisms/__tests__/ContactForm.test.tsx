@@ -113,33 +113,41 @@ describe("ContactForm Component", () => {
 
     test("calls setSelectedContact on input change", () => {
         render(<ContactForm {...defaultProps} />);
+        let currentState = defaultProps.selectedContact;
 
         const field1 = screen.getByTestId("firstname").querySelector("input");
+        const field2 = screen.getByTestId("lastname").querySelector("input");
+        const field3 = screen.getByTestId("email").querySelector("input");
+
         if (field1) {
             fireEvent.change(field1, { target: { value: "Jane" } });
+            const updateFn = mockSetSelectedContact.mock.calls[0][0];
+            currentState = updateFn(currentState);
 
-            expect(mockSetSelectedContact).toHaveBeenCalledWith({
-                ...defaultProps.selectedContact,
+            expect(currentState).toEqual({
+                ...currentState,
                 firstname: "Jane",
             });
         }
 
-        const field2 = screen.getByTestId("lastname").querySelector("input");
         if (field2) {
             fireEvent.change(field2, { target: { value: "Test" } });
+            const updateFn = mockSetSelectedContact.mock.calls[1][0];
+            currentState = updateFn(currentState);
 
-            expect(mockSetSelectedContact).toHaveBeenCalledWith({
-                ...defaultProps.selectedContact,
+            expect(currentState).toEqual({
+                ...currentState,
                 lastname: "Test",
             });
         }
 
-        const field3 = screen.getByTestId("email").querySelector("input");
         if (field3) {
             fireEvent.change(field3, { target: { value: "test_email@gmail.com" } });
+            const updateFn = mockSetSelectedContact.mock.calls[2][0];
+            currentState = updateFn(currentState);
 
-            expect(mockSetSelectedContact).toHaveBeenCalledWith({
-                ...defaultProps.selectedContact,
+            expect(currentState).toEqual({
+                ...currentState,
                 email: "test_email@gmail.com",
             });
         }
