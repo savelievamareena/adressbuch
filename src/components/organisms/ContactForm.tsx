@@ -5,6 +5,8 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type ContactCardEntity } from "../../types";
 import styles from "./organisms.module.css";
+import { addContact } from "../../utils/addContact";
+import { deleteContact } from "../../utils/deleteContact";
 
 type ContactFormProps = {
     onClose: () => void;
@@ -25,44 +27,6 @@ const ContactForm = ({ onClose, selectedContact, setSelectedContact }: ContactFo
                 [name]: value,
             })
         );
-    };
-
-    const addContact = async (selectedContact: ContactCardEntity) => {
-        const url = selectedContact.id
-            ? `http://localhost:3001/contacts/${selectedContact.id}`
-            : "http://localhost:3001/contacts";
-
-        const method = selectedContact.id ? "PUT" : "POST";
-
-        const contactData = selectedContact.id
-            ? selectedContact
-            : { ...selectedContact, id: undefined };
-
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(contactData),
-        });
-        if (!response.ok) {
-            throw new Error("Failed to submit the form");
-        }
-        return await response.json();
-    };
-
-    const deleteContact = async (contactId: string) => {
-        const response = await fetch(`http://localhost:3001/contacts/${contactId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(contactId),
-        });
-        if (!response.ok) {
-            throw new Error("Failed to submit the form");
-        }
-        return await response.json();
     };
 
     const { mutate, isError, error } = useMutation({

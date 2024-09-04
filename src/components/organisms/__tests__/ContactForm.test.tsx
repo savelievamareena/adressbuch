@@ -4,13 +4,26 @@ import ContactForm from "../ContactForm";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import fetchMock from "jest-fetch-mock";
 import "@testing-library/jest-dom";
+import { addContact } from "../../../utils/addContact";
+import { deleteContact } from "../../../utils/deleteContact";
 
 jest.mock("@tanstack/react-query", () => ({
     useMutation: jest.fn(),
     useQueryClient: jest.fn(),
 }));
 
-fetchMock.enableMocks();
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+        ok: true,
+        json: () =>
+            Promise.resolve({
+                id: "1",
+                firstname: "John",
+                lastname: "Doe",
+                email: "john.doe@example.com",
+            }),
+    })
+) as jest.Mock;
 
 describe("ContactForm Component", () => {
     const mockOnClose = jest.fn();
@@ -201,5 +214,59 @@ describe("ContactForm Component", () => {
 
         render(<ContactForm {...defaultProps} />);
         expect(screen.getByRole("button", { name: "LOSCHEN" })).toBeDisabled();
+    });
+
+    test("contact is added successfully", async () => {
+        const response = await addContact({
+            id: "1",
+            firstname: "John",
+            lastname: "Doe",
+            email: "john.doe@example.com",
+        });
+
+        expect(response).toEqual({
+            id: "1",
+            firstname: "John",
+            lastname: "Doe",
+            email: "john.doe@example.com",
+        });
+    });
+
+    test("contact is deleted successfully", async () => {
+        const response = await deleteContact("1");
+
+        expect(response).toEqual({
+            id: "1",
+            firstname: "John",
+            lastname: "Doe",
+            email: "john.doe@example.com",
+        });
+    });
+
+    test("throws error when addition fails", async () => {
+        (global.fetch as jest.Mock).mockImplementationOnce(() =>
+            Promise.resolve({
+                ok: false,
+            })
+        );
+
+        await expect(
+            addContact({
+                id: "1",
+                firstname: "John",
+                lastname: "Doe",
+                email: "john.doe@example.com",
+            })
+        ).rejects.toThrow("Failed to submit the form");
+    });
+
+    test("throws error when deletion fails", async () => {
+        (global.fetch as jest.Mock).mockImplementationOnce(() =>
+            Promise.resolve({
+                ok: false, // Simulate failed response
+            })
+        );
+
+        await expect(deleteContact("1")).rejects.toThrow("Failed to submit the form");
     });
 });
